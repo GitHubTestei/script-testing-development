@@ -1,0 +1,47 @@
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+local characterModel = character:FindFirstChildOfClass("Model")
+
+-- Function to search for the part with the specific name in folders within Workspace
+local function findPartInFolders(partName)
+    for _, obj in ipairs(workspace:GetChildren()) do
+        if obj:IsA("Folder") then
+            for _, part in ipairs(obj:GetChildren()) do
+                if part:IsA("BasePart") and part.Name == partName then
+                    return part
+                end
+            end
+        end
+    end
+    return nil
+end
+
+-- Main execution
+local partName = "6"  -- Specify the part name directly
+local part = findPartInFolders(partName)
+
+if part then
+    -- Temporarily disable collision for smooth teleportation
+    local collisionGroupId = workspace:FindFirstChildOfClass("CollisionGroup") and workspace:FindFirstChildOfClass("CollisionGroup").Name or "Default"
+    
+    -- Change the collision group to a group with no collisions if possible
+    if characterModel and collisionGroupId then
+        local originalCollisionGroup = characterModel:FindFirstChild("CollisionGroup")
+        if originalCollisionGroup then
+            originalCollisionGroup.Value = collisionGroupId
+        end
+    end
+    
+    -- Teleport the player
+    humanoidRootPart.CFrame = part.CFrame
+    
+    -- Restore collision group after teleport
+    if characterModel and originalCollisionGroup then
+        originalCollisionGroup.Value = collisionGroupId
+    end
+
+    print("Teleported to part '" .. partName .. "'.")
+else
+    print("Part '" .. partName .. "' not found in any folders.")
+end
