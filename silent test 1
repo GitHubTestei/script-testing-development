@@ -1,0 +1,29 @@
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+-- Function to search for the part with the specific name in folders within Workspace
+local function findPartInFolders(partName)
+    for _, obj in ipairs(workspace:GetChildren()) do
+        if obj:IsA("Folder") then
+            for _, part in ipairs(obj:GetChildren()) do
+                if part:IsA("BasePart") and part.Name == partName then
+                    return part
+                end
+            end
+        end
+    end
+    return nil
+end
+
+-- Main execution
+local partName = "6"  -- Specify the part name directly
+local part = findPartInFolders(partName)
+
+if part then
+    -- Set the player's position to the part's position without causing visual movement
+    humanoidRootPart.CFrame = part.CFrame
+    print("Teleported to part '" .. partName .. "'.")
+else
+    print("Part '" .. partName .. "' not found in any folders.")
+end
