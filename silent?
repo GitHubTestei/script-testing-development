@@ -1,0 +1,39 @@
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local checkpointModule = require(game.ServerScriptService:WaitForChild("CheckpointModule")) -- Replace with the actual path to your checkpoint module
+
+-- Function to search for the part with the specific name in folders within Workspace
+local function findPartInFolders(partName)
+    for _, obj in ipairs(workspace:GetChildren()) do
+        if obj:IsA("Folder") then
+            for _, part in ipairs(obj:GetChildren()) do
+                if part:IsA("BasePart") and part.Name == partName then
+                    return part
+                end
+            end
+        end
+    end
+    return nil
+end
+
+-- Function to set the checkpoint directly
+local function setCheckpoint(checkpointNumber)
+    -- Assuming your checkpoint system has a function or method to set checkpoints
+    if checkpointModule and checkpointModule.SetCheckpoint then
+        checkpointModule:SetCheckpoint(checkpointNumber)
+        print("Checkpoint " .. checkpointNumber .. " activated.")
+    else
+        print("Checkpoint system not found or missing SetCheckpoint function.")
+    end
+end
+
+-- Main execution
+local partName = "6"  -- Specify the part name directly
+local part = findPartInFolders(partName)
+
+if part then
+    -- Set the checkpoint directly
+    setCheckpoint(6)  -- Activate checkpoint 6 without teleporting
+else
+    print("Part '" .. partName .. "' not found in any folders.")
+end
